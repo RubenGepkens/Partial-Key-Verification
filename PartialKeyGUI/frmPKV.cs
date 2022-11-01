@@ -42,7 +42,7 @@ namespace PartialKeyGUI
         private void button1_Click(object sender, EventArgs e)
         {
 
-            var generator = new PartialKeyGenerator(new Adler16(), new Jenkins96(), new uint[] { 1, 2 }) { Spacing = 5 };
+            var generator = new PartialKeyGenerator(new Adler16(), new Jenkins96(), new uint[] { 2, 2 }) { Spacing = 5 };
             var key = generator.Generate("henk");
 
             Console.WriteLine("{0}", key.ToString());
@@ -147,7 +147,11 @@ namespace PartialKeyGUI
             dataGridView1.Columns.Add("Hash", "Hash");
             dataGridView1.Columns.Add("Seed", "Seed");
             dataGridView1.Columns.Add("Subkeys", "Subkeys");
-            dataGridView1.Columns.Add("Key", "Key");            
+            dataGridView1.Columns.Add("Key", "Key");
+
+            long seed = Convert.ToInt64("A2791717", 16);
+            var ding = PKV_GetKeyByte(seed, 24, 3, 200);
+            Console.WriteLine("Dingetje: {0}", ding);
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -169,6 +173,21 @@ namespace PartialKeyGUI
         private void deleteAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dataGridView1.Rows.Clear();
+        }
+
+        private long PKV_GetKeyByte(long seed, int a, int b, int c)
+        {
+            a = (a % 25);
+            b = (b % 3);
+
+            if (a % 2 == 0)
+            {
+                return ((seed >> a) & 0x000000FF) ^ ( (seed >> b) | c);
+
+            } else
+            {
+                return ((seed >> a) & 0x000000FF) ^ ((seed >> b) & c);
+            }
         }
     }
 }
